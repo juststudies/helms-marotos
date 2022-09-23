@@ -5,3 +5,7 @@ type: application
 version: 0.1.0
 appVersion: "1.16.0"
 icon: https://i0.wp.com/www.webig.pro.br/blog/wp-content/uploads/2020/05/nginx-logo-oficial.png?resize=211%2C239&ssl=1
+dependencies:
+  - name: grafana
+    version: 6.33.1
+    repository: https://grafana.github.io/helm-charts
