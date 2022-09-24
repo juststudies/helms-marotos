@@ -17,6 +17,8 @@ spec:
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+        checksum/PersistentVolumeClaim: {{ include (print $.Template.BasePath "/pvc.yaml") . | sha256sum }}
+        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
       labels:
         {{- include "theia.selectorLabels" . | nindent 8 }}
     spec:
@@ -27,6 +29,14 @@ spec:
       serviceAccountName: {{ include "theia.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+      - name: disco
+        persistentVolumeClaim: 
+          claimName: {{ include "theia.fullname" . }}
+      - configMap:
+          defaultMode: 509
+          name: {{ include "theia.fullname" . }}
+        name: conf
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -35,7 +45,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 3000
+              containerPort: {{ .Values.service.targetPort }}
               protocol: TCP
           {{- with .Values.livenessProbe }}
           livenessProbe:
